@@ -1,4 +1,4 @@
-# Report
+# Reportlist
 
 This mod add a report list of players to minetest.
 
