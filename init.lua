@@ -10,6 +10,7 @@ report = {
 	},
 	autoban = true,
 	autotempban = true,
+	time_played_to_report = 3600, --  in seconds  Only needed when useing playtime
 }
 reportfunc = {}
 
@@ -112,11 +113,14 @@ minetest.register_chatcommand("report", {
 			if name ~= param and ename ~= eparam then
 				if minetest.get_player_by_name(param) then
 					if minetest.get_player_information(param).connection_uptime >= 480 then
-						if reportfunc.is_reporter(param, name) ~= true then
-      				reportfunc.set_count(param, reportfunc.get_count(param)+reportcount)
-							reportfunc.add_reporter(param, name)
-      				minetest.chat_send_player(name, param.." has been reported!")
-						else minetest.chat_send_player(name, "You have already have reported "..param.." or somebody out of his ip-Group!")
+						if not playtime or playtime.get_total_playtime(param) >= report.time_played_to_report then
+							if reportfunc.is_reporter(param, name) ~= true then
+      					reportfunc.set_count(param, reportfunc.get_count(param)+reportcount)
+								reportfunc.add_reporter(param, name)
+      					minetest.chat_send_player(name, param.." has been reported!")
+							else minetest.chat_send_player(name, "You have already have reported "..param.." or somebody out of his ip-Group!")
+							end
+						else minetest.chat_send_player(name, "You have to play longer to report a player!")
 						end
 					else minetest.chat_send_player(name, "You have to play longer to report a player!")
 					end
