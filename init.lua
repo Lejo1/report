@@ -64,8 +64,10 @@ end)
 function reportfunc.check_ban(name)
 	if reportfunc.get_count(name) >= 20 and report.autoban == true then
 		xban.ban_player(name, "Reportmod", nil, "You have been reported 20 times or cheated to much!")
+		minetest.log("action", "Player "..name.." has been baned after he got reported 20 times.")
 	elseif reportfunc.get_count(name) >= 10 and report.autotempban == true and not xban.get_record(name) then
 		xban.ban_player(name, "Reportmod", os.time()+259200, "You have been reported 10 times or cheated to much!")
+		minetest.log("action", "Player "..name.." has been baned for three days after he got reported 10 times.")
 	end
 end
 
@@ -90,6 +92,7 @@ if report.report_on_cheat["enable"] == true then
 				if report.report_on_cheat["global_chat_message_on_report_cheat"] == true then
 					minetest.chat_send_all(name.." is maybe hacking: "..cheat.type.." ! Have a look at him.")
 				end
+				minetest.log("action", "Player "..name.." has been reported automaticly by cheating with: "..cheat.type)
 			end
 		end
 	end)
@@ -112,12 +115,13 @@ minetest.register_chatcommand("report", {
     if ename and eparam then
 			if name ~= param and ename ~= eparam then
 				if minetest.get_player_by_name(param) then
-					if minetest.get_player_information(param).connection_uptime >= 480 then
-						if not playtime or playtime.get_total_playtime(param) >= report.time_played_to_report then
+					if minetest.get_player_information(name).connection_uptime >= 480 then
+						if not playtime or playtime.get_total_playtime(name) >= report.time_played_to_report then
 							if reportfunc.is_reporter(param, name) ~= true then
       					reportfunc.set_count(param, reportfunc.get_count(param)+reportcount)
 								reportfunc.add_reporter(param, name)
       					minetest.chat_send_player(name, param.." has been reported!")
+								minetest.log("action", "Player "..param.." has been reported by "..name)
 							else minetest.chat_send_player(name, "You have already have reported "..param.." or somebody out of his ip-Group!")
 							end
 						else minetest.chat_send_player(name, "You have to play longer to report a player!")
