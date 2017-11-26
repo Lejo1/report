@@ -10,6 +10,7 @@ report = {
 	},
 	autoban = true,
 	autotempban = true,
+	ban_notification_in_chat = true,
 	time_played_to_report = 3600, --  in seconds  Only needed when useing playtime
 }
 reportfunc = {}
@@ -65,9 +66,15 @@ function reportfunc.check_ban(name)
 	if reportfunc.get_count(name) >= 20 and report.autoban == true then
 		xban.ban_player(name, "Reportmod", nil, "You have been reported 20 times or cheated to much!")
 		minetest.log("action", "Player "..name.." has been baned after he got reported 20 times.")
+		if report.ban_notification_in_chat == true then
+			minetest.chat_send_all("Player "..name.." has been baned, because he has been reported 20 times or cheated to much!")
+		end
 	elseif reportfunc.get_count(name) >= 10 and report.autotempban == true and not xban.get_record(name) then
 		xban.ban_player(name, "Reportmod", os.time()+259200, "You have been reported 10 times or cheated to much!")
 		minetest.log("action", "Player "..name.." has been baned for three days after he got reported 10 times.")
+		if report.ban_notification_in_chat == true then
+			minetest.chat_send_all("Player "..name.." has been baned for three days, because he has been reported 10 times or cheated to much!")
+		end
 	end
 end
 
@@ -167,3 +174,4 @@ minetest.register_chatcommand("report_set", {
 		end
 	end,
 })
+
