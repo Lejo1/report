@@ -64,7 +64,7 @@ end)
 --  Auto ban players
 function reportfunc.check_ban(name)
 	if reportfunc.get_count(name) >= 20 and report.autoban == true then
-		xban.ban_player(name, "Reportmod", nil, "You have been reported 20 times or cheated to much!")
+		xban.ban_player(name, "Reportmod", nil, "You have been reported 20 times or cheated to much! Make sure you are useing an orginal minetest client.")
 		minetest.log("action", "Player "..name.." has been baned after he got reported 20 times.")
 		if report.ban_notification_in_chat == true then
 			minetest.chat_send_all("Player "..name.." has been baned, because he has been reported 20 times or cheated to much!")
@@ -174,4 +174,3 @@ minetest.register_chatcommand("report_set", {
 		end
 	end,
 })
-
