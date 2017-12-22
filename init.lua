@@ -34,10 +34,8 @@ function reportfunc.is_reporter(name, reportername)
 	local e = xban.find_entry(name)
 	if e.reporter and reporterentry.names then
 		for testi,value in ipairs(e.reporter) do
-			for posname in pairs(reporterentry.names) do
-				if posname == value then
-					return true
-				end
+			if reporterentry.names[value] then
+				return true
 			end
 		end
 	end
