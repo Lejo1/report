@@ -80,7 +80,7 @@ end
 if report.report_on_cheat["enable"] == true then
 	minetest.register_on_cheat(function(player, cheat)
 		local name = player:get_player_name()
-		if cheat.type == "finished_unknown_dig" or cheat.type == "dug_unbreakable" or cheat.type == "dug_too_fast" then
+		if cheat.type == "dug_unbreakable" or cheat.type == "dug_too_fast" then
 			local reporthim = true
 			if report.report_on_cheat["only_one_report_per_cheat"] == true then
 				if reportfunc.is_reporter(name, cheat.type) == true then
