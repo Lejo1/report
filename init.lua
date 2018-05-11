@@ -52,7 +52,7 @@ end
 minetest.register_on_joinplayer(function(player)
   local name = player:get_player_name()
 	local e = xban.find_entry(name)
-  if not e.reported then
+  if e and not e.reported then
 		e.reported = 0
 		e.reporter = {}
 	end
