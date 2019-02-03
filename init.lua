@@ -6,11 +6,11 @@ report = {
 		only_one_report_per_cheat = false,
 		report_count_on_cheat = 1,
 		player_message_on_report_cheat = true,
-		global_chat_message_on_report_cheat = true,
+		global_chat_message_on_report_cheat = false,
 	},
-	autoban = true,
-	autotempban = true,
-	ban_notification_in_chat = true,
+	autoban = false,
+	autotempban = false,
+	ban_notification_in_chat = false,
 	time_played_to_report = 3600, --  in seconds  Only needed when useing playtime
 }
 reportfunc = {}
