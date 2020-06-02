@@ -1,18 +1,14 @@
 # Reportlist
 
-This mod add a report list of players to minetest.
+This mod add a report list of players to minetest.  
+A Player can only report an other player ones!  
+Players can be reported by just typing /report <name> <reason>
 
-A Player can only report an other player ones!
+You can show the reportlist formspec: /reportlist  
+Reset a player reports with: /report_reset <name>
 
-Players can be reported by just typing /report <name>
+It's compatible with xban and sban
 
-You can show the report count using: /report_get <name>
-
-And set it with: /report_set <name> <amount>
-
-Depends: xban2
-[Here](https://github.com/Lejo1/xban2/tree/report) is a xban2 fork with report count in gui.
-
-License: CC0
+License: MIT
 
 Created by [Lejo](https://github.com/Lejo1)
