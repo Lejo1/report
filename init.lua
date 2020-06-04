@@ -64,7 +64,7 @@ minetest.register_chatcommand("report", {
     local reported, reason = param:match("(%S+)%s+(.+)")
     if type(reported) == "string" and type(reason) == "string" then
       if minetest.player_exists(reported) then
-        if true or name ~= reported and minetest.get_player_ip(name) ~= minetest.get_player_ip(reported) then
+        if name ~= reported and minetest.get_player_ip(name) ~= minetest.get_player_ip(reported) then
           if minetest.get_player_by_name(reported) then
             if not playtime or playtime.get_total_playtime(name) >= settings.time_played_to_report then
               reportlist.add_reporter(reported, name, reason)
