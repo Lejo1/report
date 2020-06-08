@@ -23,6 +23,14 @@ function reportlist.get_data(name)
   end
 end
 
+function reportlist.get_all_data()
+  local out = {}
+  for name, data in pairs(s:to_table().fields) do
+    out[name] = minetest.deserialize(data)
+  end
+  return out
+end
+
 function reportlist.set_data(name, data)
   s:set_string(name, minetest.serialize(data))
 end
@@ -36,10 +44,6 @@ function reportlist.exist(name)
 		return true
 	else return false
 	end
-end
-
-function reportlist.get_count(name)
-  return #reportlist.get_data(name).r
 end
 
 function reportlist.is_reporter(name, reportername)
@@ -85,15 +89,18 @@ minetest.register_chatcommand("report", {
 
 
 function reportlist.show_form(name, fields)
-	local reported = ""
-  local selected = 1
+	local reported = fields.name or ""
   local tabledata = ""
+  local form = "size[14,5.5]" ..
+  "label[3.5,0.1;Reportlist. Enter playername to do an action.]" ..
+  "button[11.2,2.6;2.5,1;reset;reset]" ..
+  "field[11.5,4;2.5,1;reason;Ban Reason;]" ..
+  "button[11.2,4.4;2.5,1;tempban;Tempban(default 3 days)]" ..
+  "field[11.5,1;1.7,1;name;Player Name;"..reported.."]" ..
+  "field_close_on_enter[name;false]" ..
+  "button[12.9,0.7;0.8,1;go;Go]"
   if fields and fields.name and fields.name ~= "" then
 		if reportlist.exist(fields.name) then
-			reported = fields.name
-    	if fields.reports then
-      	selected = tonumber(minetest.explode_table_event(fields.reports).row)
-    	end
     	local data = reportlist.get_data(fields.name)
     	for playername, d in pairs(data.r) do
       	local pdata = reportlist.get_data(playername)
@@ -101,23 +108,21 @@ function reportlist.show_form(name, fields)
     	end
 		else tabledata = "Player hasn't been reported yet"
 		end
-	else tabledata = "Insert Valid player name!"
+    form = form .. "tablecolumns[text;text;text]"
+  else
+    for name, data in pairs(reportlist.get_all_data()) do
+      local count = 0
+      local pstuff = ""
+      for name, d in pairs(data.r) do
+        pstuff = pstuff.."1,"..name..","..os.date("%c", d.t)..","..minetest.formspec_escape(d.r)..","
+        count = count + 1
+      end
+      tabledata = tabledata.."0,"..name..","..count..",,"..pstuff
+    end
+    form = form .. "tablecolumns[tree;text;text;text]"
   end
-
-	if not fields or (fields and fields.name and fields.name ~= "") then
-    local form = "" ..
-    "size[10,5.5]" ..
-    "label[1.5,0.1;Reportlist. Enter playername to do an action.]" ..
-    "tablecolumns[text;text;text]" ..
-    "table[0.2,0.6;6.8,4.6;reports;"..tabledata..";"..selected.."]" ..
-    "button[7.2,2.6;2.5,1;reset;reset]" ..
-		"field[7.5,4;2.5,1;reason;Ban Reason;]" ..
-    "button[7.2,4.4;2.5,1;tempban;Tempban(default 3 days)]" ..
-    "field[7.5,1;1.7,1;name;Player Name;"..reported.."]" ..
-		"field_close_on_enter[name;false]" ..
-    "button[8.9,0.7;0.8,1;go;Go]"
-    minetest.show_formspec(name, "reportlist:reportlist", form)
-  end
+  form = form .. "table[0.2,0.6;10.8,4.6;reports;"..tabledata..";1]"
+  minetest.show_formspec(name, "reportlist:reportlist", form)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
@@ -144,7 +149,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					end
 				end
 			end
-    	reportlist.show_form(name, fields)
+      if fields.reset or fields.tempban or fields.go or fields.key_enter then
+    	   reportlist.show_form(name, fields)
+      end
   	else
     	minetest.log("error", "Player "..name.." sent fields to reportlist:reportlist without the ban privi")
     	minetest.kick_player(name)
@@ -155,10 +162,10 @@ end)
 --  Add a chat command to get the report counter
 minetest.register_chatcommand("reportlist", {
 	privs = {ban = true},
-	params = "",
+	params = "[<name>]",
 	description = "Use it to open the reportlist form.",
-	func = function(name)
-  	reportlist.show_form(name)
+	func = function(name, param)
+  	reportlist.show_form(name, {name = param})
 	end,
 })
 
